@@ -1,0 +1,75 @@
+spring:
+  application:
+    name: ship-monitoring-backend
+  
+  # 数据源配置
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ship_monitoring
+    username: postgres
+    password: 030525
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  
+  # JPA配置
+  jpa:
+    database-platform: org.hibernate.spatial.dialect.postgis.PostgisPG95Dialect
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: false
+        jdbc:
+          time_zone: UTC
+    show-sql: false
+  
+  # Jackson配置
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+    serialization:
+      write-dates-as-timestamps: false
+
+# 服务器配置
+server:
+  port: 8081
+  servlet:
+    context-path: /
+
+# 船讯网API配置
+shipxy:
+  api:
+    base-url: https://api.shipxy.com
+    api-key: ${SHIPXY_API_KEY:your_api_key_here}
+
+# WebSocket配置
+websocket:
+  port: 8081
+  path: /ws
+  allowed-origins: "*"
+
+# Webhook配置
+webhook:
+  path: /webhook/area
+  public-url: ${PUBLIC_URL:http://localhost:8081}
+
+# 定时任务配置
+scheduler:
+  ship-update:
+    enabled: true
+    fixed-rate: 600000  # 10分钟 = 600000毫秒
+
+# 日志配置
+logging:
+  level:
+    root: INFO
+    com.oceanmining.monitoring: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
