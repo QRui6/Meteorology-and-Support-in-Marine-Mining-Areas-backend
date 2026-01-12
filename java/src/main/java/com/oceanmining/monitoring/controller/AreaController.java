@@ -8,8 +8,9 @@ import com.oceanmining.monitoring.dto.response.ShipDTO;
 import com.oceanmining.monitoring.service.AreaService;
 import com.oceanmining.monitoring.service.EventLogService;
 import com.oceanmining.monitoring.service.ShipService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,15 +19,21 @@ import java.util.List;
 /**
  * 区域管理控制器
  */
-@Slf4j
 @RestController
 @RequestMapping("/api/areas")
-@RequiredArgsConstructor
 public class AreaController {
 
+    private static final Logger log = LoggerFactory.getLogger(AreaController.class);
     private final AreaService areaService;
     private final ShipService shipService;
     private final EventLogService eventLogService;
+
+    @Autowired
+    public AreaController(AreaService areaService, ShipService shipService, EventLogService eventLogService) {
+        this.areaService = areaService;
+        this.shipService = shipService;
+        this.eventLogService = eventLogService;
+    }
 
     /**
      * 创建监控区域

@@ -8,9 +8,9 @@ import com.oceanmining.monitoring.enums.ShipStatus;
 import com.oceanmining.monitoring.repository.AreaRepository;
 import com.oceanmining.monitoring.repository.ShipRepository;
 import com.oceanmining.monitoring.service.ShipService;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -20,15 +20,21 @@ import java.util.Map;
 /**
  * 测试接口控制器
  */
-@Slf4j
 @RestController
 @RequestMapping("/api/test")
-@RequiredArgsConstructor
 public class TestController {
 
+    private static final Logger log = LoggerFactory.getLogger(TestController.class);
     private final AreaRepository areaRepository;
     private final ShipRepository shipRepository;
     private final ShipService shipService;
+
+    @Autowired
+    public TestController(AreaRepository areaRepository, ShipRepository shipRepository, ShipService shipService) {
+        this.areaRepository = areaRepository;
+        this.shipRepository = shipRepository;
+        this.shipService = shipService;
+    }
 
     /**
      * 模拟船舶进入事件
@@ -122,18 +128,32 @@ public class TestController {
         return ApiResponse.success(result);
     }
 
-    @Data
     public static class TestShipEnterRequest {
         private Long areaId;
         private Long mmsi;
         private String shipName;
         private Double lat;
         private Double lng;
+
+        public Long getAreaId() { return areaId; }
+        public void setAreaId(Long areaId) { this.areaId = areaId; }
+        public Long getMmsi() { return mmsi; }
+        public void setMmsi(Long mmsi) { this.mmsi = mmsi; }
+        public String getShipName() { return shipName; }
+        public void setShipName(String shipName) { this.shipName = shipName; }
+        public Double getLat() { return lat; }
+        public void setLat(Double lat) { this.lat = lat; }
+        public Double getLng() { return lng; }
+        public void setLng(Double lng) { this.lng = lng; }
     }
 
-    @Data
     public static class TestShipLeaveRequest {
         private Long areaId;
         private Long mmsi;
+
+        public Long getAreaId() { return areaId; }
+        public void setAreaId(Long areaId) { this.areaId = areaId; }
+        public Long getMmsi() { return mmsi; }
+        public void setMmsi(Long mmsi) { this.mmsi = mmsi; }
     }
 }

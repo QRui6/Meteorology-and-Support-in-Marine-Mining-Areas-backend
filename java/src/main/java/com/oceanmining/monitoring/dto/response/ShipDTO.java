@@ -3,152 +3,130 @@ package com.oceanmining.monitoring.dto.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.oceanmining.monitoring.enums.RiskLevel;
 import com.oceanmining.monitoring.enums.ShipStatus;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 /**
  * 船舶信息响应DTO
  */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ShipDTO {
     
-    /**
-     * 船舶MMSI号
-     */
     private Long mmsi;
-    
-    /**
-     * 船舶名称
-     */
     private String shipName;
-    
-    /**
-     * 船舶中文名
-     */
     private String shipCnName;
-    
-    /**
-     * 进入时间
-     */
     private LocalDateTime enterTime;
-    
-    /**
-     * 离开时间
-     */
     private LocalDateTime leaveTime;
-    
-    /**
-     * 状态
-     */
     private ShipStatus status;
-    
-    /**
-     * 最后位置
-     */
     private PositionDTO lastPosition;
-    
-    /**
-     * 最新气象数据
-     */
     private WeatherDTO lastWeather;
-    
-    /**
-     * 风险等级
-     */
     private RiskLevel riskLevel;
-    
-    /**
-     * IMO号
-     */
     private String imo;
-    
-    /**
-     * 呼号
-     */
     private String callSign;
-    
-    /**
-     * 船舶类型
-     */
     private String shipType;
-    
-    /**
-     * 船长
-     */
     private Double length;
-    
-    /**
-     * 船宽
-     */
     private Double width;
-    
-    /**
-     * 吃水
-     */
     private Double draught;
-    
-    /**
-     * 目的地
-     */
     private String destination;
-    
-    /**
-     * 预计到达时间
-     */
     private String eta;
-    
-    /**
-     * 对地速度
-     */
     private Double sog;
-    
-    /**
-     * 对地航向
-     */
     private Double cog;
-    
-    /**
-     * 船首向
-     */
     private Double hdg;
-    
-    /**
-     * 纬度
-     */
     private Double lat;
-    
-    /**
-     * 经度
-     */
     private Double lng;
-    
-    /**
-     * 最后更新时间
-     */
     private String lastTime;
     
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
+    // Constructors
+    public ShipDTO() {}
+    
+    // Getters and Setters
+    public Long getMmsi() { return mmsi; }
+    public void setMmsi(Long mmsi) { this.mmsi = mmsi; }
+    
+    public String getShipName() { return shipName; }
+    public void setShipName(String shipName) { this.shipName = shipName; }
+    
+    public String getShipCnName() { return shipCnName; }
+    public void setShipCnName(String shipCnName) { this.shipCnName = shipCnName; }
+    
+    public LocalDateTime getEnterTime() { return enterTime; }
+    public void setEnterTime(LocalDateTime enterTime) { this.enterTime = enterTime; }
+    
+    public LocalDateTime getLeaveTime() { return leaveTime; }
+    public void setLeaveTime(LocalDateTime leaveTime) { this.leaveTime = leaveTime; }
+    
+    public ShipStatus getStatus() { return status; }
+    public void setStatus(ShipStatus status) { this.status = status; }
+    
+    public PositionDTO getLastPosition() { return lastPosition; }
+    public void setLastPosition(PositionDTO lastPosition) { this.lastPosition = lastPosition; }
+    
+    public WeatherDTO getLastWeather() { return lastWeather; }
+    public void setLastWeather(WeatherDTO lastWeather) { this.lastWeather = lastWeather; }
+    
+    public RiskLevel getRiskLevel() { return riskLevel; }
+    public void setRiskLevel(RiskLevel riskLevel) { this.riskLevel = riskLevel; }
+    
+    public String getImo() { return imo; }
+    public void setImo(String imo) { this.imo = imo; }
+    
+    public String getCallSign() { return callSign; }
+    public void setCallSign(String callSign) { this.callSign = callSign; }
+    
+    public String getShipType() { return shipType; }
+    public void setShipType(String shipType) { this.shipType = shipType; }
+    
+    public Double getLength() { return length; }
+    public void setLength(Double length) { this.length = length; }
+    
+    public Double getWidth() { return width; }
+    public void setWidth(Double width) { this.width = width; }
+    
+    public Double getDraught() { return draught; }
+    public void setDraught(Double draught) { this.draught = draught; }
+    
+    public String getDestination() { return destination; }
+    public void setDestination(String destination) { this.destination = destination; }
+    
+    public String getEta() { return eta; }
+    public void setEta(String eta) { this.eta = eta; }
+    
+    public Double getSog() { return sog; }
+    public void setSog(Double sog) { this.sog = sog; }
+    
+    public Double getCog() { return cog; }
+    public void setCog(Double cog) { this.cog = cog; }
+    
+    public Double getHdg() { return hdg; }
+    public void setHdg(Double hdg) { this.hdg = hdg; }
+    
+    public Double getLat() { return lat; }
+    public void setLat(Double lat) { this.lat = lat; }
+    
+    public Double getLng() { return lng; }
+    public void setLng(Double lng) { this.lng = lng; }
+    
+    public String getLastTime() { return lastTime; }
+    public void setLastTime(String lastTime) { this.lastTime = lastTime; }
+    
     public static class PositionDTO {
         private Double lat;
         private Double lng;
+        
+        public PositionDTO() {}
+        
+        public PositionDTO(Double lat, Double lng) {
+            this.lat = lat;
+            this.lng = lng;
+        }
+        
+        public Double getLat() { return lat; }
+        public void setLat(Double lat) { this.lat = lat; }
+        
+        public Double getLng() { return lng; }
+        public void setLng(Double lng) { this.lng = lng; }
     }
     
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
     public static class WeatherDTO {
         private Double windSpeed;
         private Double waveHeight;
@@ -158,5 +136,31 @@ public class ShipDTO {
         private Double pressure;
         private Double visibility;
         private String publishTime;
+        
+        public WeatherDTO() {}
+        
+        public Double getWindSpeed() { return windSpeed; }
+        public void setWindSpeed(Double windSpeed) { this.windSpeed = windSpeed; }
+        
+        public Double getWaveHeight() { return waveHeight; }
+        public void setWaveHeight(Double waveHeight) { this.waveHeight = waveHeight; }
+        
+        public Double getTemperature() { return temperature; }
+        public void setTemperature(Double temperature) { this.temperature = temperature; }
+        
+        public String getWindDir() { return windDir; }
+        public void setWindDir(String windDir) { this.windDir = windDir; }
+        
+        public Double getHumidity() { return humidity; }
+        public void setHumidity(Double humidity) { this.humidity = humidity; }
+        
+        public Double getPressure() { return pressure; }
+        public void setPressure(Double pressure) { this.pressure = pressure; }
+        
+        public Double getVisibility() { return visibility; }
+        public void setVisibility(Double visibility) { this.visibility = visibility; }
+        
+        public String getPublishTime() { return publishTime; }
+        public void setPublishTime(String publishTime) { this.publishTime = publishTime; }
     }
 }

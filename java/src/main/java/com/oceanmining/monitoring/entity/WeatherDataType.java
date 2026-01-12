@@ -1,9 +1,6 @@
 package com.oceanmining.monitoring.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -16,9 +13,6 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "weather_data_types")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class WeatherDataType {
     
     @Id
@@ -49,4 +43,29 @@ public class WeatherDataType {
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
+    
+    // Constructors
+    public WeatherDataType() {}
+    
+    public WeatherDataType(String typeCode, String typeName, String description) {
+        this.typeCode = typeCode;
+        this.typeName = typeName;
+        this.description = description;
+    }
+    
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    
+    public String getTypeCode() { return typeCode; }
+    public void setTypeCode(String typeCode) { this.typeCode = typeCode; }
+    
+    public String getTypeName() { return typeName; }
+    public void setTypeName(String typeName) { this.typeName = typeName; }
+    
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+    
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }

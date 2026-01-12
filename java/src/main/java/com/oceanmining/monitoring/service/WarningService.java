@@ -7,8 +7,8 @@ import com.oceanmining.monitoring.enums.WarningSeverity;
 import com.oceanmining.monitoring.repository.WarningRepository;
 import com.oceanmining.monitoring.websocket.ShipMonitoringWebSocketHandler;
 import com.oceanmining.monitoring.websocket.WebSocketMessage;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,13 +21,18 @@ import java.util.stream.Collectors;
 /**
  * 预警管理服务
  */
-@Slf4j
 @Service
-@RequiredArgsConstructor
 public class WarningService {
+    
+    private static final Logger log = LoggerFactory.getLogger(WarningService.class);
 
     private final WarningRepository warningRepository;
     private final ShipMonitoringWebSocketHandler webSocketHandler;
+    
+    public WarningService(WarningRepository warningRepository, ShipMonitoringWebSocketHandler webSocketHandler) {
+        this.warningRepository = warningRepository;
+        this.webSocketHandler = webSocketHandler;
+    }
 
     /**
      * 创建预警
@@ -75,10 +80,7 @@ public class WarningService {
             payload.put("message", message);
             payload.put("severity", risk.getLevel().name().toLowerCase());
 
-            webSocketHandler.broadcast(WebSocketMessage.builder()
-                    .type("warning")
-                    .payload(payload)
-                    .build());
+            webSocketHandler.broadcast(new WebSocketMessage("warning", payload, System.currentTimeMillis()));
 
         } catch (Exception e) {
             log.error("创建预警失败", e);

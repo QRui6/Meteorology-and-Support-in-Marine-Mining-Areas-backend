@@ -1,8 +1,9 @@
 package com.oceanmining.monitoring.config;
 
 import com.oceanmining.monitoring.service.WeatherDataMigrationService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -11,15 +12,19 @@ import org.springframework.stereotype.Component;
  * 气象数据迁移启动器
  * 如果配置了auto-run=true，则在应用启动时自动执行数据迁移
  */
-@Slf4j
 @Component
-@RequiredArgsConstructor
 public class WeatherDataMigrationRunner implements CommandLineRunner {
 
+    private static final Logger log = LoggerFactory.getLogger(WeatherDataMigrationRunner.class);
     private final WeatherDataMigrationService migrationService;
 
     @Value("${weather.migration.auto-run:false}")
     private boolean autoRun;
+
+    @Autowired
+    public WeatherDataMigrationRunner(WeatherDataMigrationService migrationService) {
+        this.migrationService = migrationService;
+    }
 
     @Override
     public void run(String... args) {

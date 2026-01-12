@@ -2,8 +2,9 @@ package com.oceanmining.monitoring.controller;
 
 import com.oceanmining.monitoring.dto.response.ApiResponse;
 import com.oceanmining.monitoring.service.WeatherDataMigrationService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,14 +12,18 @@ import org.springframework.web.bind.annotation.*;
  * 气象数据迁移控制器
  * 提供手动触发数据迁移的REST端点
  */
-@Slf4j
 @RestController
 @RequestMapping("/api/migration")
-@RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class WeatherDataMigrationController {
 
+    private static final Logger log = LoggerFactory.getLogger(WeatherDataMigrationController.class);
     private final WeatherDataMigrationService migrationService;
+
+    @Autowired
+    public WeatherDataMigrationController(WeatherDataMigrationService migrationService) {
+        this.migrationService = migrationService;
+    }
 
     /**
      * 迁移所有气象数据

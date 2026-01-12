@@ -5,21 +5,27 @@ import com.oceanmining.monitoring.dto.request.WebhookRequest;
 import com.oceanmining.monitoring.entity.MonitoringArea;
 import com.oceanmining.monitoring.enums.EventType;
 import com.oceanmining.monitoring.repository.AreaRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
  * Webhook处理服务
  */
-@Slf4j
 @Service
-@RequiredArgsConstructor
 public class WebhookService {
+    
+    private static final Logger log = LoggerFactory.getLogger(WebhookService.class);
 
     private final AreaRepository areaRepository;
     private final ShipService shipService;
     private final EventLogService eventLogService;
+    
+    public WebhookService(AreaRepository areaRepository, ShipService shipService, EventLogService eventLogService) {
+        this.areaRepository = areaRepository;
+        this.shipService = shipService;
+        this.eventLogService = eventLogService;
+    }
 
     /**
      * 处理Webhook推送

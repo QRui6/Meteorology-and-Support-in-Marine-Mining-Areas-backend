@@ -2,10 +2,6 @@ package com.oceanmining.monitoring.entity;
 
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 import org.locationtech.jts.geom.Polygon;
 
@@ -19,10 +15,6 @@ import java.util.List;
  */
 @Entity
 @Table(name = "monitoring_areas")
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class MonitoringArea {
     
     @Id
@@ -117,4 +109,44 @@ public class MonitoringArea {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+    
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    
+    public String getAreaId() { return areaId; }
+    public void setAreaId(String areaId) { this.areaId = areaId; }
+    
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    
+    public String getPolygon() { return polygon; }
+    public void setPolygon(String polygon) { this.polygon = polygon; }
+    
+    public Polygon getGeometry() { return geometry; }
+    public void setGeometry(Polygon geometry) { this.geometry = geometry; }
+    
+    public BigDecimal getThresholdWindSpeed() { return thresholdWindSpeed; }
+    public void setThresholdWindSpeed(BigDecimal thresholdWindSpeed) { this.thresholdWindSpeed = thresholdWindSpeed; }
+    
+    public BigDecimal getThresholdWaveHeight() { return thresholdWaveHeight; }
+    public void setThresholdWaveHeight(BigDecimal thresholdWaveHeight) { this.thresholdWaveHeight = thresholdWaveHeight; }
+    
+    public Boolean getIsActive() { return isActive; }
+    public void setIsActive(Boolean isActive) { this.isActive = isActive; }
+    
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    
+    public List<AreaShip> getShips() { return ships; }
+    public void setShips(List<AreaShip> ships) { this.ships = ships; }
+    
+    public List<Warning> getWarnings() { return warnings; }
+    public void setWarnings(List<Warning> warnings) { this.warnings = warnings; }
+    
+    public List<EventLog> getEventLogs() { return eventLogs; }
+    public void setEventLogs(List<EventLog> eventLogs) { this.eventLogs = eventLogs; }
 }

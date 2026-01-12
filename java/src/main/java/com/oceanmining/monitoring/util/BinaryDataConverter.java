@@ -1,6 +1,7 @@
 package com.oceanmining.monitoring.util;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -12,8 +13,9 @@ import java.nio.ByteOrder;
  * @author Ocean Mining Team
  * @version 1.0.0
  */
-@Slf4j
 public class BinaryDataConverter {
+    
+    private static final Logger log = LoggerFactory.getLogger(BinaryDataConverter.class);
     
     /**
      * 将float数组转换为byte数组

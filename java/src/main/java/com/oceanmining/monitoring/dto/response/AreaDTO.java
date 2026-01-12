@@ -1,98 +1,109 @@
 package com.oceanmining.monitoring.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 监控区域响应DTO
  */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AreaDTO {
     
-    /**
-     * 区域ID
-     */
     private Long id;
-    
-    /**
-     * 船讯网区域ID
-     */
     private String areaId;
-    
-    /**
-     * 区域名称
-     */
     private String name;
-    
-    /**
-     * 多边形坐标
-     */
     private List<List<Double>> polygon;
-    
-    /**
-     * 阈值配置
-     */
     private ThresholdsDTO thresholds;
-    
-    /**
-     * 是否激活
-     */
     private Boolean isActive;
-    
-    /**
-     * 创建时间
-     */
     private LocalDateTime createdAt;
-    
-    /**
-     * 区域内船舶数量
-     */
     private Integer shipCount;
-    
-    /**
-     * 预警数量
-     */
     private Integer warningCount;
-    
-    /**
-     * 区域边界
-     */
     private BoundsDTO bounds;
-    
-    /**
-     * 区域面积（平方公里）
-     */
     private String area;
     
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
+    // Constructors
+    public AreaDTO() {}
+    
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    
+    public String getAreaId() { return areaId; }
+    public void setAreaId(String areaId) { this.areaId = areaId; }
+    
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    
+    public List<List<Double>> getPolygon() { return polygon; }
+    public void setPolygon(List<List<Double>> polygon) { this.polygon = polygon; }
+    
+    public ThresholdsDTO getThresholds() { return thresholds; }
+    public void setThresholds(ThresholdsDTO thresholds) { this.thresholds = thresholds; }
+    
+    public Boolean getIsActive() { return isActive; }
+    public void setIsActive(Boolean isActive) { this.isActive = isActive; }
+    
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    
+    public Integer getShipCount() { return shipCount; }
+    public void setShipCount(Integer shipCount) { this.shipCount = shipCount; }
+    
+    public Integer getWarningCount() { return warningCount; }
+    public void setWarningCount(Integer warningCount) { this.warningCount = warningCount; }
+    
+    public BoundsDTO getBounds() { return bounds; }
+    public void setBounds(BoundsDTO bounds) { this.bounds = bounds; }
+    
+    public String getArea() { return area; }
+    public void setArea(String area) { this.area = area; }
+    
     public static class ThresholdsDTO {
         private BigDecimal windSpeed;
         private BigDecimal waveHeight;
+        
+        public ThresholdsDTO() {}
+        
+        public ThresholdsDTO(BigDecimal windSpeed, BigDecimal waveHeight) {
+            this.windSpeed = windSpeed;
+            this.waveHeight = waveHeight;
+        }
+        
+        public BigDecimal getWindSpeed() { return windSpeed; }
+        public void setWindSpeed(BigDecimal windSpeed) { this.windSpeed = windSpeed; }
+        
+        public BigDecimal getWaveHeight() { return waveHeight; }
+        public void setWaveHeight(BigDecimal waveHeight) { this.waveHeight = waveHeight; }
     }
     
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
     public static class BoundsDTO {
         private String minLng;
         private String maxLng;
         private String minLat;
         private String maxLat;
+        
+        public BoundsDTO() {}
+        
+        public BoundsDTO(String minLng, String maxLng, String minLat, String maxLat) {
+            this.minLng = minLng;
+            this.maxLng = maxLng;
+            this.minLat = minLat;
+            this.maxLat = maxLat;
+        }
+        
+        public String getMinLng() { return minLng; }
+        public void setMinLng(String minLng) { this.minLng = minLng; }
+        
+        public String getMaxLng() { return maxLng; }
+        public void setMaxLng(String maxLng) { this.maxLng = maxLng; }
+        
+        public String getMinLat() { return minLat; }
+        public void setMinLat(String minLat) { this.minLat = minLat; }
+        
+        public String getMaxLat() { return maxLat; }
+        public void setMaxLat(String maxLat) { this.maxLat = maxLat; }
     }
 }

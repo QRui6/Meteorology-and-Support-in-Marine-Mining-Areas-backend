@@ -5,7 +5,8 @@ import com.oceanmining.monitoring.dto.WeatherMetadataJson;
 import com.oceanmining.monitoring.entity.*;
 import com.oceanmining.monitoring.repository.*;
 import com.oceanmining.monitoring.util.BinaryDataConverter;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -28,9 +29,9 @@ import java.time.format.DateTimeFormatter;
  * @version 1.0.0
  */
 @Service
-@Slf4j
 public class WeatherDataMigrationService {
     
+    private static final Logger log = LoggerFactory.getLogger(WeatherDataMigrationService.class);
     private final WeatherDataTypeRepository dataTypeRepository;
     private final WeatherMetadataRepository metadataRepository;
     private final WindDataRepository windDataRepository;

@@ -3,7 +3,8 @@ package com.oceanmining.monitoring.util;
 import com.oceanmining.monitoring.dto.response.WeatherDataDTO;
 import com.oceanmining.monitoring.dto.response.WeatherMetadataDTO;
 import com.oceanmining.monitoring.entity.*;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.format.DateTimeFormatter;
 
@@ -14,8 +15,9 @@ import java.time.format.DateTimeFormatter;
  * @author Ocean Mining Team
  * @version 1.0.0
  */
-@Slf4j
 public class WeatherDataConverter {
+    
+    private static final Logger log = LoggerFactory.getLogger(WeatherDataConverter.class);
     
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ISO_DATE_TIME;
     
@@ -30,26 +32,26 @@ public class WeatherDataConverter {
             return null;
         }
         
-        WeatherMetadataDTO.GridInfo gridInfo = WeatherMetadataDTO.GridInfo.builder()
-                .lonSize(metadata.getGridLonSize())
-                .latSize(metadata.getGridLatSize())
-                .lonMin(metadata.getGridLonMin().doubleValue())
-                .latMin(metadata.getGridLatMin().doubleValue())
-                .lonMax(metadata.getGridLonMax().doubleValue())
-                .latMax(metadata.getGridLatMax().doubleValue())
-                .lonStep(metadata.getGridLonStep() != null ? metadata.getGridLonStep().doubleValue() : null)
-                .latStep(metadata.getGridLatStep() != null ? metadata.getGridLatStep().doubleValue() : null)
-                .build();
+        WeatherMetadataDTO.GridInfo gridInfo = new WeatherMetadataDTO.GridInfo();
+        gridInfo.setLonSize(metadata.getGridLonSize());
+        gridInfo.setLatSize(metadata.getGridLatSize());
+        gridInfo.setLonMin(metadata.getGridLonMin().doubleValue());
+        gridInfo.setLatMin(metadata.getGridLatMin().doubleValue());
+        gridInfo.setLonMax(metadata.getGridLonMax().doubleValue());
+        gridInfo.setLatMax(metadata.getGridLatMax().doubleValue());
+        gridInfo.setLonStep(metadata.getGridLonStep() != null ? metadata.getGridLonStep().doubleValue() : null);
+        gridInfo.setLatStep(metadata.getGridLatStep() != null ? metadata.getGridLatStep().doubleValue() : null);
         
-        return WeatherMetadataDTO.builder()
-                .id(metadata.getId())
-                .type(metadata.getDataType().getTypeCode())
-                .grid(gridInfo)
-                .startTime(metadata.getStartTime() != null ? metadata.getStartTime().format(DATE_TIME_FORMATTER) : null)
-                .timeStepHours(metadata.getTimeStepHours())
-                .frames(metadata.getTotalFrames())
-                .dataSource(metadata.getDataSource())
-                .build();
+        WeatherMetadataDTO dto = new WeatherMetadataDTO();
+        dto.setId(metadata.getId());
+        dto.setType(metadata.getDataType().getTypeCode());
+        dto.setGrid(gridInfo);
+        dto.setStartTime(metadata.getStartTime() != null ? metadata.getStartTime().format(DATE_TIME_FORMATTER) : null);
+        dto.setTimeStepHours(metadata.getTimeStepHours());
+        dto.setFrames(metadata.getTotalFrames());
+        dto.setDataSource(metadata.getDataSource());
+        
+        return dto;
     }
     
     /**
@@ -144,32 +146,23 @@ public class WeatherDataConverter {
             Float vMin, Float vMax,
             WeatherMetadata metadata) {
         
-        WeatherDataDTO.ComponentData uComponent = WeatherDataDTO.ComponentData.builder()
-                .array(uArray)
-                .min(uMin)
-                .max(uMax)
-                .build();
+        WeatherDataDTO.ComponentData uComponent = new WeatherDataDTO.ComponentData(uArray, uMin, uMax);
+        WeatherDataDTO.ComponentData vComponent = new WeatherDataDTO.ComponentData(vArray, vMin, vMax);
+        WeatherDataDTO.BoundsInfo bounds = new WeatherDataDTO.BoundsInfo(
+                metadata.getGridLonMin().doubleValue(),
+                metadata.getGridLatMin().doubleValue(),
+                metadata.getGridLonMax().doubleValue(),
+                metadata.getGridLatMax().doubleValue()
+        );
         
-        WeatherDataDTO.ComponentData vComponent = WeatherDataDTO.ComponentData.builder()
-                .array(vArray)
-                .min(vMin)
-                .max(vMax)
-                .build();
+        WeatherDataDTO dto = new WeatherDataDTO();
+        dto.setTimeIndex(timeIndex);
+        dto.setU(uComponent);
+        dto.setV(vComponent);
+        dto.setWidth(metadata.getGridLonSize());
+        dto.setHeight(metadata.getGridLatSize());
+        dto.setBounds(bounds);
         
-        WeatherDataDTO.BoundsInfo bounds = WeatherDataDTO.BoundsInfo.builder()
-                .west(metadata.getGridLonMin().doubleValue())
-                .south(metadata.getGridLatMin().doubleValue())
-                .east(metadata.getGridLonMax().doubleValue())
-                .north(metadata.getGridLatMax().doubleValue())
-                .build();
-        
-        return WeatherDataDTO.builder()
-                .timeIndex(timeIndex)
-                .u(uComponent)
-                .v(vComponent)
-                .width(metadata.getGridLonSize())
-                .height(metadata.getGridLatSize())
-                .bounds(bounds)
-                .build();
+        return dto;
     }
 }

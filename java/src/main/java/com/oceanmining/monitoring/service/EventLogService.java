@@ -9,8 +9,8 @@ import com.oceanmining.monitoring.entity.Warning;
 import com.oceanmining.monitoring.enums.EventType;
 import com.oceanmining.monitoring.repository.EventLogRepository;
 import com.oceanmining.monitoring.repository.WarningRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,13 +23,18 @@ import java.util.Map;
 /**
  * 事件日志服务
  */
-@Slf4j
 @Service
-@RequiredArgsConstructor
 public class EventLogService {
+    
+    private static final Logger log = LoggerFactory.getLogger(EventLogService.class);
 
     private final EventLogRepository eventLogRepository;
     private final WarningRepository warningRepository;
+    
+    public EventLogService(EventLogRepository eventLogRepository, WarningRepository warningRepository) {
+        this.eventLogRepository = eventLogRepository;
+        this.warningRepository = warningRepository;
+    }
 
     /**
      * 记录事件

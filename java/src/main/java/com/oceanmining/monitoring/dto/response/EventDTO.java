@@ -1,10 +1,6 @@
 package com.oceanmining.monitoring.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -12,70 +8,59 @@ import java.util.Map;
 /**
  * 事件响应DTO
  */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EventDTO {
     
-    /**
-     * 事件ID
-     */
     private String id;
-    
-    /**
-     * 事件类型
-     */
     private String type;
-    
-    /**
-     * 船舶MMSI
-     */
     private Long mmsi;
-    
-    /**
-     * 事件数据
-     */
     private Map<String, Object> data;
-    
-    /**
-     * 事件时间
-     */
     private LocalDateTime time;
-    
-    /**
-     * 事件分类 (event/warning)
-     */
     private String category;
-    
-    /**
-     * 预警类型（仅当category为warning时）
-     */
     private String warningType;
-    
-    /**
-     * 严重程度（仅当category为warning时）
-     */
     private String severity;
-    
-    /**
-     * 预警消息（仅当category为warning时）
-     */
     private String message;
-    
-    /**
-     * 气象数据（仅当category为warning时）
-     */
     private Map<String, Object> weatherData;
-    
-    /**
-     * 是否已解决（仅当category为warning时）
-     */
     private Boolean isResolved;
-    
-    /**
-     * 解决时间（仅当category为warning时）
-     */
     private LocalDateTime resolvedAt;
+    
+    // Constructors
+    public EventDTO() {}
+    
+    // Getters and Setters
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+    
+    public String getType() { return type; }
+    public void setType(String type) { this.type = type; }
+    
+    public Long getMmsi() { return mmsi; }
+    public void setMmsi(Long mmsi) { this.mmsi = mmsi; }
+    
+    public Map<String, Object> getData() { return data; }
+    public void setData(Map<String, Object> data) { this.data = data; }
+    
+    public LocalDateTime getTime() { return time; }
+    public void setTime(LocalDateTime time) { this.time = time; }
+    
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
+    
+    public String getWarningType() { return warningType; }
+    public void setWarningType(String warningType) { this.warningType = warningType; }
+    
+    public String getSeverity() { return severity; }
+    public void setSeverity(String severity) { this.severity = severity; }
+    
+    public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
+    
+    public Map<String, Object> getWeatherData() { return weatherData; }
+    public void setWeatherData(Map<String, Object> weatherData) { this.weatherData = weatherData; }
+    
+    public Boolean getIsResolved() { return isResolved; }
+    public void setIsResolved(Boolean isResolved) { this.isResolved = isResolved; }
+    
+    public LocalDateTime getResolvedAt() { return resolvedAt; }
+    public void setResolvedAt(LocalDateTime resolvedAt) { this.resolvedAt = resolvedAt; }
 }

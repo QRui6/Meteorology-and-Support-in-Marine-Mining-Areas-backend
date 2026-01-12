@@ -1,9 +1,6 @@
 package com.oceanmining.monitoring.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -16,9 +13,6 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "ocean_current_data")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class OceanCurrentData {
     
     @Id
@@ -86,4 +80,54 @@ public class OceanCurrentData {
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
+    
+    // Constructors
+    public OceanCurrentData() {}
+    
+    public OceanCurrentData(WeatherMetadata metadata, Integer timeIndex, byte[] uComponent, byte[] vComponent,
+                           Float uMin, Float uMax, Float vMin, Float vMax, Integer dataSize) {
+        this.metadata = metadata;
+        this.timeIndex = timeIndex;
+        this.uComponent = uComponent;
+        this.vComponent = vComponent;
+        this.uMin = uMin;
+        this.uMax = uMax;
+        this.vMin = vMin;
+        this.vMax = vMax;
+        this.dataSize = dataSize;
+    }
+    
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    
+    public WeatherMetadata getMetadata() { return metadata; }
+    public void setMetadata(WeatherMetadata metadata) { this.metadata = metadata; }
+    
+    public Integer getTimeIndex() { return timeIndex; }
+    public void setTimeIndex(Integer timeIndex) { this.timeIndex = timeIndex; }
+    
+    public byte[] getUComponent() { return uComponent; }
+    public void setUComponent(byte[] uComponent) { this.uComponent = uComponent; }
+    
+    public byte[] getVComponent() { return vComponent; }
+    public void setVComponent(byte[] vComponent) { this.vComponent = vComponent; }
+    
+    public Float getUMin() { return uMin; }
+    public void setUMin(Float uMin) { this.uMin = uMin; }
+    
+    public Float getUMax() { return uMax; }
+    public void setUMax(Float uMax) { this.uMax = uMax; }
+    
+    public Float getVMin() { return vMin; }
+    public void setVMin(Float vMin) { this.vMin = vMin; }
+    
+    public Float getVMax() { return vMax; }
+    public void setVMax(Float vMax) { this.vMax = vMax; }
+    
+    public Integer getDataSize() { return dataSize; }
+    public void setDataSize(Integer dataSize) { this.dataSize = dataSize; }
+    
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }

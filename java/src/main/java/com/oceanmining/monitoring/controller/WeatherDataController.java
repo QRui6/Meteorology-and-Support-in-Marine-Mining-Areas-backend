@@ -6,7 +6,8 @@ import com.oceanmining.monitoring.dto.response.WeatherDataDTO;
 import com.oceanmining.monitoring.dto.response.WeatherMetadataDTO;
 import com.oceanmining.monitoring.dto.response.WeatherPointQueryDTO;
 import com.oceanmining.monitoring.service.WeatherDataService;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -21,10 +22,10 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/api/weather")
-@Slf4j
 @CrossOrigin(origins = "*")
 public class WeatherDataController {
     
+    private static final Logger log = LoggerFactory.getLogger(WeatherDataController.class);
     private final WeatherDataService weatherDataService;
     
     @Autowired

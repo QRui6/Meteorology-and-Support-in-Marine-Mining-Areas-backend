@@ -2,10 +2,6 @@ package com.oceanmining.monitoring.entity;
 
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 
 import java.time.LocalDateTime;
@@ -16,10 +12,6 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "event_logs")
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class EventLog {
     
     @Id
@@ -61,4 +53,23 @@ public class EventLog {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
     }
+    
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    
+    public MonitoringArea getArea() { return area; }
+    public void setArea(MonitoringArea area) { this.area = area; }
+    
+    public Long getMmsi() { return mmsi; }
+    public void setMmsi(Long mmsi) { this.mmsi = mmsi; }
+    
+    public String getEventType() { return eventType; }
+    public void setEventType(String eventType) { this.eventType = eventType; }
+    
+    public String getEventData() { return eventData; }
+    public void setEventData(String eventData) { this.eventData = eventData; }
+    
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }

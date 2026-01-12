@@ -1,9 +1,6 @@
 package com.oceanmining.monitoring.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -18,9 +15,6 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "weather_metadata")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class WeatherMetadata {
     
     @Id
@@ -119,4 +113,75 @@ public class WeatherMetadata {
     @Column(name = "updated_at")
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+    
+    // Constructors
+    public WeatherMetadata() {}
+    
+    public WeatherMetadata(WeatherDataType dataType, Integer gridLonSize, Integer gridLatSize,
+                          BigDecimal gridLonMin, BigDecimal gridLatMin, BigDecimal gridLonMax, BigDecimal gridLatMax,
+                          BigDecimal gridLonStep, BigDecimal gridLatStep, LocalDateTime startTime,
+                          Integer timeStepHours, Integer totalFrames, String dataSource) {
+        this.dataType = dataType;
+        this.gridLonSize = gridLonSize;
+        this.gridLatSize = gridLatSize;
+        this.gridLonMin = gridLonMin;
+        this.gridLatMin = gridLatMin;
+        this.gridLonMax = gridLonMax;
+        this.gridLatMax = gridLatMax;
+        this.gridLonStep = gridLonStep;
+        this.gridLatStep = gridLatStep;
+        this.startTime = startTime;
+        this.timeStepHours = timeStepHours;
+        this.totalFrames = totalFrames;
+        this.dataSource = dataSource;
+    }
+    
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    
+    public WeatherDataType getDataType() { return dataType; }
+    public void setDataType(WeatherDataType dataType) { this.dataType = dataType; }
+    
+    public Integer getGridLonSize() { return gridLonSize; }
+    public void setGridLonSize(Integer gridLonSize) { this.gridLonSize = gridLonSize; }
+    
+    public Integer getGridLatSize() { return gridLatSize; }
+    public void setGridLatSize(Integer gridLatSize) { this.gridLatSize = gridLatSize; }
+    
+    public BigDecimal getGridLonMin() { return gridLonMin; }
+    public void setGridLonMin(BigDecimal gridLonMin) { this.gridLonMin = gridLonMin; }
+    
+    public BigDecimal getGridLatMin() { return gridLatMin; }
+    public void setGridLatMin(BigDecimal gridLatMin) { this.gridLatMin = gridLatMin; }
+    
+    public BigDecimal getGridLonMax() { return gridLonMax; }
+    public void setGridLonMax(BigDecimal gridLonMax) { this.gridLonMax = gridLonMax; }
+    
+    public BigDecimal getGridLatMax() { return gridLatMax; }
+    public void setGridLatMax(BigDecimal gridLatMax) { this.gridLatMax = gridLatMax; }
+    
+    public BigDecimal getGridLonStep() { return gridLonStep; }
+    public void setGridLonStep(BigDecimal gridLonStep) { this.gridLonStep = gridLonStep; }
+    
+    public BigDecimal getGridLatStep() { return gridLatStep; }
+    public void setGridLatStep(BigDecimal gridLatStep) { this.gridLatStep = gridLatStep; }
+    
+    public LocalDateTime getStartTime() { return startTime; }
+    public void setStartTime(LocalDateTime startTime) { this.startTime = startTime; }
+    
+    public Integer getTimeStepHours() { return timeStepHours; }
+    public void setTimeStepHours(Integer timeStepHours) { this.timeStepHours = timeStepHours; }
+    
+    public Integer getTotalFrames() { return totalFrames; }
+    public void setTotalFrames(Integer totalFrames) { this.totalFrames = totalFrames; }
+    
+    public String getDataSource() { return dataSource; }
+    public void setDataSource(String dataSource) { this.dataSource = dataSource; }
+    
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

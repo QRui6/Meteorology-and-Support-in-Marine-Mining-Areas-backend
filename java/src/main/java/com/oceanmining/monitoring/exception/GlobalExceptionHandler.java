@@ -1,7 +1,8 @@
 package com.oceanmining.monitoring.exception;
 
 import com.oceanmining.monitoring.dto.response.ApiResponse;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -16,9 +17,10 @@ import java.util.Map;
 /**
  * 全局异常处理器
  */
-@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
     
     /**
      * 处理静态资源未找到异常（忽略日志，避免污染）
@@ -78,14 +80,15 @@ public class GlobalExceptionHandler {
         });
         
         log.error("参数校验失败: {}", errors);
+        ApiResponse<Map<String, String>> response = new ApiResponse<>();
+        response.setSuccess(false);
+        response.setData(errors);
+        response.setError("参数校验失败");
+        response.setTimestamp(System.currentTimeMillis());
+        
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponse.<Map<String, String>>builder()
-                        .success(false)
-                        .data(errors)
-                        .error("参数校验失败")
-                        .timestamp(System.currentTimeMillis())
-                        .build());
+                .body(response);
     }
     
     /**

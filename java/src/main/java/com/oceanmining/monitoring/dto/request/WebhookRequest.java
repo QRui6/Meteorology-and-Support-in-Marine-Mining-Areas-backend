@@ -1,12 +1,10 @@
 package com.oceanmining.monitoring.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
 
 /**
  * 船讯网Webhook推送请求DTO
  */
-@Data
 public class WebhookRequest {
     
     /**
@@ -64,4 +62,35 @@ public class WebhookRequest {
      */
     @JsonProperty("call_sign")
     private String callSign;
+    
+    // Getters and Setters
+    public String getAreaId() { return areaId; }
+    public void setAreaId(String areaId) { this.areaId = areaId; }
+    
+    public Integer getEventType() { return eventType; }
+    public void setEventType(Integer eventType) { this.eventType = eventType; }
+    
+    public Long getMmsi() { return mmsi; }
+    public void setMmsi(Long mmsi) { this.mmsi = mmsi; }
+    
+    public String getShipName() { return shipName; }
+    public void setShipName(String shipName) { this.shipName = shipName; }
+    
+    public Double getLat() { return lat; }
+    public void setLat(Double lat) { this.lat = lat; }
+    
+    public Double getLng() { return lng; }
+    public void setLng(Double lng) { this.lng = lng; }
+    
+    public String getEventTime() { return eventTime; }
+    public void setEventTime(String eventTime) { this.eventTime = eventTime; }
+    
+    public Long getEventTimeUtc() { return eventTimeUtc; }
+    public void setEventTimeUtc(Long eventTimeUtc) { this.eventTimeUtc = eventTimeUtc; }
+    
+    public String getImo() { return imo; }
+    public void setImo(String imo) { this.imo = imo; }
+    
+    public String getCallSign() { return callSign; }
+    public void setCallSign(String callSign) { this.callSign = callSign; }
 }

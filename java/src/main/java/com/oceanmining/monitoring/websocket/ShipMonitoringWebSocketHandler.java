@@ -1,7 +1,8 @@
 package com.oceanmining.monitoring.websocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -17,10 +18,10 @@ import java.util.Set;
  * 船舶监控WebSocket处理器
  * 用于实时推送船舶进入/离开、预警等消息到前端
  */
-@Slf4j
 @Component
 public class ShipMonitoringWebSocketHandler extends TextWebSocketHandler {
     
+    private static final Logger log = LoggerFactory.getLogger(ShipMonitoringWebSocketHandler.class);
     private final Set<WebSocketSession> sessions = Collections.synchronizedSet(new HashSet<>());
     private final ObjectMapper objectMapper = new ObjectMapper();
     

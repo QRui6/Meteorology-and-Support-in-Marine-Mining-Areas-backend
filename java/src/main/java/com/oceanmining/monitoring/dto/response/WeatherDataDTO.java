@@ -1,102 +1,96 @@
 package com.oceanmining.monitoring.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 /**
  * 气象数据DTO
  * 
  * @author Ocean Mining Team
  * @version 1.0.0
  */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class WeatherDataDTO {
     
-    /**
-     * 时间索引
-     */
     private Integer timeIndex;
-    
-    /**
-     * U分量数据
-     */
     private ComponentData u;
-    
-    /**
-     * V分量数据
-     */
     private ComponentData v;
-    
-    /**
-     * 经度网格数量
-     */
     private Integer width;
-    
-    /**
-     * 纬度网格数量
-     */
     private Integer height;
-    
-    /**
-     * 边界信息
-     */
     private BoundsInfo bounds;
+    
+    // Constructors
+    public WeatherDataDTO() {}
+    
+    // Getters and Setters
+    public Integer getTimeIndex() { return timeIndex; }
+    public void setTimeIndex(Integer timeIndex) { this.timeIndex = timeIndex; }
+    
+    public ComponentData getU() { return u; }
+    public void setU(ComponentData u) { this.u = u; }
+    
+    public ComponentData getV() { return v; }
+    public void setV(ComponentData v) { this.v = v; }
+    
+    public Integer getWidth() { return width; }
+    public void setWidth(Integer width) { this.width = width; }
+    
+    public Integer getHeight() { return height; }
+    public void setHeight(Integer height) { this.height = height; }
+    
+    public BoundsInfo getBounds() { return bounds; }
+    public void setBounds(BoundsInfo bounds) { this.bounds = bounds; }
     
     /**
      * 分量数据
      */
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
     public static class ComponentData {
-        /**
-         * 数据数组
-         */
         private float[] array;
-        
-        /**
-         * 最小值
-         */
         private Float min;
-        
-        /**
-         * 最大值
-         */
         private Float max;
+        
+        public ComponentData() {}
+        
+        public ComponentData(float[] array, Float min, Float max) {
+            this.array = array;
+            this.min = min;
+            this.max = max;
+        }
+        
+        public float[] getArray() { return array; }
+        public void setArray(float[] array) { this.array = array; }
+        
+        public Float getMin() { return min; }
+        public void setMin(Float min) { this.min = min; }
+        
+        public Float getMax() { return max; }
+        public void setMax(Float max) { this.max = max; }
     }
     
     /**
      * 边界信息
      */
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
     public static class BoundsInfo {
-        /**
-         * 西边界（经度最小值）
-         */
         private Double west;
-        
-        /**
-         * 南边界（纬度最小值）
-         */
         private Double south;
-        
-        /**
-         * 东边界（经度最大值）
-         */
         private Double east;
-        
-        /**
-         * 北边界（纬度最大值）
-         */
         private Double north;
+        
+        public BoundsInfo() {}
+        
+        public BoundsInfo(Double west, Double south, Double east, Double north) {
+            this.west = west;
+            this.south = south;
+            this.east = east;
+            this.north = north;
+        }
+        
+        public Double getWest() { return west; }
+        public void setWest(Double west) { this.west = west; }
+        
+        public Double getSouth() { return south; }
+        public void setSouth(Double south) { this.south = south; }
+        
+        public Double getEast() { return east; }
+        public void setEast(Double east) { this.east = east; }
+        
+        public Double getNorth() { return north; }
+        public void setNorth(Double north) { this.north = north; }
     }
 }

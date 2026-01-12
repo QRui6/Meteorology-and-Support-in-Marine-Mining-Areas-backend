@@ -4,10 +4,6 @@ import com.oceanmining.monitoring.enums.RiskLevel;
 import com.oceanmining.monitoring.enums.ShipStatus;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 import org.locationtech.jts.geom.Point;
 
@@ -20,10 +16,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "area_ships", 
        uniqueConstraints = @UniqueConstraint(columnNames = {"area_id", "mmsi", "status"}))
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class AreaShip {
     
     @Id
@@ -124,4 +116,44 @@ public class AreaShip {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+    
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    
+    public MonitoringArea getArea() { return area; }
+    public void setArea(MonitoringArea area) { this.area = area; }
+    
+    public Long getMmsi() { return mmsi; }
+    public void setMmsi(Long mmsi) { this.mmsi = mmsi; }
+    
+    public String getShipName() { return shipName; }
+    public void setShipName(String shipName) { this.shipName = shipName; }
+    
+    public LocalDateTime getEnterTime() { return enterTime; }
+    public void setEnterTime(LocalDateTime enterTime) { this.enterTime = enterTime; }
+    
+    public LocalDateTime getLeaveTime() { return leaveTime; }
+    public void setLeaveTime(LocalDateTime leaveTime) { this.leaveTime = leaveTime; }
+    
+    public ShipStatus getStatus() { return status; }
+    public void setStatus(ShipStatus status) { this.status = status; }
+    
+    public String getLastPosition() { return lastPosition; }
+    public void setLastPosition(String lastPosition) { this.lastPosition = lastPosition; }
+    
+    public Point getLastPoint() { return lastPoint; }
+    public void setLastPoint(Point lastPoint) { this.lastPoint = lastPoint; }
+    
+    public String getLastWeather() { return lastWeather; }
+    public void setLastWeather(String lastWeather) { this.lastWeather = lastWeather; }
+    
+    public RiskLevel getRiskLevel() { return riskLevel; }
+    public void setRiskLevel(RiskLevel riskLevel) { this.riskLevel = riskLevel; }
+    
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

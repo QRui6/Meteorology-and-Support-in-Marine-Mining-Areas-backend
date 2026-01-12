@@ -2,8 +2,8 @@ package com.oceanmining.monitoring.service;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.oceanmining.monitoring.dto.request.WebhookRequest;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -19,9 +19,10 @@ import java.util.Map;
  * 船讯网API服务
  * 负责与ShipXY API交互
  */
-@Slf4j
 @Service
 public class ShipXYApiService {
+    
+    private static final Logger log = LoggerFactory.getLogger(ShipXYApiService.class);
 
     private final RestTemplate restTemplate;
 

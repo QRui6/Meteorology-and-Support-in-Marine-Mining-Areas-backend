@@ -3,10 +3,6 @@ package com.oceanmining.monitoring.entity;
 import com.oceanmining.monitoring.enums.WarningSeverity;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 
 import java.time.LocalDateTime;
@@ -17,10 +13,6 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "warnings")
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class Warning {
     
     @Id
@@ -102,4 +94,35 @@ public class Warning {
         this.isResolved = true;
         this.resolvedAt = LocalDateTime.now();
     }
+    
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    
+    public MonitoringArea getArea() { return area; }
+    public void setArea(MonitoringArea area) { this.area = area; }
+    
+    public Long getMmsi() { return mmsi; }
+    public void setMmsi(Long mmsi) { this.mmsi = mmsi; }
+    
+    public String getWarningType() { return warningType; }
+    public void setWarningType(String warningType) { this.warningType = warningType; }
+    
+    public WarningSeverity getSeverity() { return severity; }
+    public void setSeverity(WarningSeverity severity) { this.severity = severity; }
+    
+    public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
+    
+    public String getWeatherData() { return weatherData; }
+    public void setWeatherData(String weatherData) { this.weatherData = weatherData; }
+    
+    public Boolean getIsResolved() { return isResolved; }
+    public void setIsResolved(Boolean isResolved) { this.isResolved = isResolved; }
+    
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    
+    public LocalDateTime getResolvedAt() { return resolvedAt; }
+    public void setResolvedAt(LocalDateTime resolvedAt) { this.resolvedAt = resolvedAt; }
 }

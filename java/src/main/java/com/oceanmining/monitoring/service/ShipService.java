@@ -11,9 +11,9 @@ import com.oceanmining.monitoring.repository.ShipRepository;
 import com.oceanmining.monitoring.util.GeometryUtil;
 import com.oceanmining.monitoring.websocket.ShipMonitoringWebSocketHandler;
 import com.oceanmining.monitoring.websocket.WebSocketMessage;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.Point;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,10 +26,10 @@ import java.util.stream.Collectors;
 /**
  * 船舶管理服务
  */
-@Slf4j
 @Service
-@RequiredArgsConstructor
 public class ShipService {
+    
+    private static final Logger log = LoggerFactory.getLogger(ShipService.class);
 
     private final ShipRepository shipRepository;
     private final AreaRepository areaRepository;
@@ -37,6 +37,17 @@ public class ShipService {
     private final RiskAssessmentService riskAssessmentService;
     private final WarningService warningService;
     private final ShipMonitoringWebSocketHandler webSocketHandler;
+    
+    public ShipService(ShipRepository shipRepository, AreaRepository areaRepository, 
+                      ShipXYApiService shipXYApiService, RiskAssessmentService riskAssessmentService,
+                      WarningService warningService, ShipMonitoringWebSocketHandler webSocketHandler) {
+        this.shipRepository = shipRepository;
+        this.areaRepository = areaRepository;
+        this.shipXYApiService = shipXYApiService;
+        this.riskAssessmentService = riskAssessmentService;
+        this.warningService = warningService;
+        this.webSocketHandler = webSocketHandler;
+    }
 
     /**
      * 处理船舶进入事件
@@ -91,10 +102,7 @@ public class ShipService {
             payload.put("weather", weather);
             payload.put("risk", risk);
 
-            webSocketHandler.broadcast(WebSocketMessage.builder()
-                    .type("ship_enter")
-                    .payload(payload)
-                    .build());
+            webSocketHandler.broadcast(new WebSocketMessage("ship_enter", payload, System.currentTimeMillis()));
 
             log.info("船舶进入事件处理完成");
 
@@ -132,10 +140,7 @@ public class ShipService {
             payload.put("areaId", area.getId());
             payload.put("mmsi", mmsi);
 
-            webSocketHandler.broadcast(WebSocketMessage.builder()
-                    .type("ship_leave")
-                    .payload(payload)
-                    .build());
+            webSocketHandler.broadcast(new WebSocketMessage("ship_leave", payload, System.currentTimeMillis()));
 
             log.info("船舶离开事件处理完成");
 
@@ -209,10 +214,7 @@ public class ShipService {
             payload.put("weather", weather);
             payload.put("risk", risk);
 
-            webSocketHandler.broadcast(WebSocketMessage.builder()
-                    .type("ship_update")
-                    .payload(payload)
-                    .build());
+            webSocketHandler.broadcast(new WebSocketMessage("ship_update", payload, System.currentTimeMillis()));
 
         } catch (Exception e) {
             log.error("更新船舶状态失败: {}", ship.getMmsi(), e);

@@ -1,17 +1,8 @@
 package com.oceanmining.monitoring.websocket;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 /**
  * WebSocket消息格式
  */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class WebSocketMessage {
     
     /**
@@ -35,14 +26,29 @@ public class WebSocketMessage {
      */
     private Long timestamp;
     
+    // Constructors
+    public WebSocketMessage() {}
+    
+    public WebSocketMessage(String type, Object payload, Long timestamp) {
+        this.type = type;
+        this.payload = payload;
+        this.timestamp = timestamp;
+    }
+    
+    // Getters and Setters
+    public String getType() { return type; }
+    public void setType(String type) { this.type = type; }
+    
+    public Object getPayload() { return payload; }
+    public void setPayload(Object payload) { this.payload = payload; }
+    
+    public Long getTimestamp() { return timestamp; }
+    public void setTimestamp(Long timestamp) { this.timestamp = timestamp; }
+    
     /**
      * 创建消息
      */
     public static WebSocketMessage create(String type, Object payload) {
-        return WebSocketMessage.builder()
-                .type(type)
-                .payload(payload)
-                .timestamp(System.currentTimeMillis())
-                .build();
+        return new WebSocketMessage(type, payload, System.currentTimeMillis());
     }
 }

@@ -9,9 +9,9 @@ import com.oceanmining.monitoring.repository.AreaRepository;
 import com.oceanmining.monitoring.util.GeometryUtil;
 import com.oceanmining.monitoring.websocket.ShipMonitoringWebSocketHandler;
 import com.oceanmining.monitoring.websocket.WebSocketMessage;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.Polygon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,14 +23,21 @@ import java.util.stream.Collectors;
 /**
  * 区域管理服务
  */
-@Slf4j
 @Service
-@RequiredArgsConstructor
 public class AreaService {
+    
+    private static final Logger log = LoggerFactory.getLogger(AreaService.class);
 
     private final AreaRepository areaRepository;
     private final ShipXYApiService shipXYApiService;
     private final ShipMonitoringWebSocketHandler webSocketHandler;
+    
+    public AreaService(AreaRepository areaRepository, ShipXYApiService shipXYApiService,
+                      ShipMonitoringWebSocketHandler webSocketHandler) {
+        this.areaRepository = areaRepository;
+        this.shipXYApiService = shipXYApiService;
+        this.webSocketHandler = webSocketHandler;
+    }
 
     /**
      * 创建监控区域
@@ -61,10 +68,7 @@ public class AreaService {
             AreaDTO areaDTO = convertToDTO(area);
 
             // 5. 推送到前端
-            webSocketHandler.broadcast(WebSocketMessage.builder()
-                    .type("area_created")
-                    .payload(areaDTO)
-                    .build());
+            webSocketHandler.broadcast(new WebSocketMessage("area_created", areaDTO, System.currentTimeMillis()));
 
             return areaDTO;
 
@@ -106,10 +110,7 @@ public class AreaService {
             Map<String, Object> payload = new HashMap<>();
             payload.put("id", id);
             
-            webSocketHandler.broadcast(WebSocketMessage.builder()
-                    .type("area_deleted")
-                    .payload(payload)
-                    .build());
+            webSocketHandler.broadcast(new WebSocketMessage("area_deleted", payload, System.currentTimeMillis()));
 
         } catch (Exception e) {
             log.error("删除区域失败", e);

@@ -3,7 +3,8 @@ package com.oceanmining.monitoring.util;
 import com.oceanmining.monitoring.dto.GridData;
 import com.oceanmining.monitoring.dto.Vector2D;
 import com.oceanmining.monitoring.dto.response.WeatherPointQueryDTO;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 气象数据插值工具类
@@ -11,8 +12,9 @@ import lombok.extern.slf4j.Slf4j;
  * @author Ocean Mining Team
  * @version 1.0.0
  */
-@Slf4j
 public class WeatherInterpolationUtil {
+    
+    private static final Logger log = LoggerFactory.getLogger(WeatherInterpolationUtil.class);
     
     /**
      * 双线性插值获取指定经纬度的向量值

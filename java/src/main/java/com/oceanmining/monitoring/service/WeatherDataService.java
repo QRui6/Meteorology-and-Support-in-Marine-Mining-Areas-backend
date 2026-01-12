@@ -11,7 +11,8 @@ import com.oceanmining.monitoring.exception.ResourceNotFoundException;
 import com.oceanmining.monitoring.repository.*;
 import com.oceanmining.monitoring.util.WeatherDataConverter;
 import com.oceanmining.monitoring.util.WeatherInterpolationUtil;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -30,10 +31,10 @@ import java.util.List;
  * @version 1.0.0
  */
 @Service
-@Slf4j
 @Transactional(readOnly = true)
 public class WeatherDataService {
     
+    private static final Logger log = LoggerFactory.getLogger(WeatherDataService.class);
     private final WeatherMetadataRepository metadataRepository;
     private final WindDataRepository windDataRepository;
     private final OceanCurrentDataRepository currentDataRepository;
@@ -127,11 +128,7 @@ public class WeatherDataService {
                 throw new IllegalArgumentException("未知的数据类型: " + type);
         }
         
-        return AvailableIndicesDTO.builder()
-                .type(type)
-                .availableIndices(indices)
-                .totalFrames(metadata.getTotalFrames())
-                .build();
+        return new AvailableIndicesDTO(type, indices, metadata.getTotalFrames());
     }
     
     /**

@@ -6,8 +6,9 @@ import com.oceanmining.monitoring.enums.ShipStatus;
 import com.oceanmining.monitoring.repository.AreaRepository;
 import com.oceanmining.monitoring.repository.ShipRepository;
 import com.oceanmining.monitoring.service.ShipService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -16,14 +17,20 @@ import java.util.List;
 /**
  * 船舶状态定时更新任务
  */
-@Slf4j
 @Component
-@RequiredArgsConstructor
 public class ShipStatusScheduler {
 
+    private static final Logger log = LoggerFactory.getLogger(ShipStatusScheduler.class);
     private final AreaRepository areaRepository;
     private final ShipRepository shipRepository;
     private final ShipService shipService;
+
+    @Autowired
+    public ShipStatusScheduler(AreaRepository areaRepository, ShipRepository shipRepository, ShipService shipService) {
+        this.areaRepository = areaRepository;
+        this.shipRepository = shipRepository;
+        this.shipService = shipService;
+    }
 
     /**
      * 定时更新区域内船舶状态（每10分钟）
