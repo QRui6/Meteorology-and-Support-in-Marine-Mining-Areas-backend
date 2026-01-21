@@ -128,8 +128,32 @@ public class AreaService {
         dto.setAreaId(area.getAreaId());
         dto.setName(area.getName());
         
-        // 解析JSON字符串为List<List<Double>>
-        List<List<Double>> polygonList = (List<List<Double>>) JSONUtil.parse(area.getPolygon());
+        // 解析JSON字符串为List<List<Double>>，处理整数到Double的转换
+        Object parsedPolygon = JSONUtil.parse(area.getPolygon());
+        List<List<Double>> polygonList;
+        
+        if (parsedPolygon instanceof List) {
+            List<?> rawList = (List<?>) parsedPolygon;
+            polygonList = rawList.stream()
+                .map(item -> {
+                    if (item instanceof List) {
+                        List<?> coords = (List<?>) item;
+                        return coords.stream()
+                            .map(coord -> {
+                                if (coord instanceof Number) {
+                                    return ((Number) coord).doubleValue();
+                                }
+                                return 0.0;
+                            })
+                            .collect(java.util.stream.Collectors.toList());
+                    }
+                    return java.util.Collections.<Double>emptyList();
+                })
+                .collect(java.util.stream.Collectors.toList());
+        } else {
+            polygonList = java.util.Collections.emptyList();
+        }
+        
         dto.setPolygon(polygonList);
         
         AreaDTO.ThresholdsDTO thresholds = new AreaDTO.ThresholdsDTO();

@@ -4,9 +4,9 @@ spring:
   
   # 数据源配置
   datasource:
-    url: jdbc:postgresql://localhost:5432/ship_monitoring?sslmode=disable
+    url: jdbc:postgresql://121.194.93.61:5432/ship_monitoring?sslmode=disable
     username: postgres
-    password: "030525"
+    password: "jcf0326_103"
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 20
@@ -48,6 +48,7 @@ spring:
 # 服务器配置
 server:
   port: 8081
+  address: 0.0.0.0  # 允许外部访问
   servlet:
     context-path: /
   compression:

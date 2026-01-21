@@ -46,7 +46,7 @@ public class ShipStatusScheduler {
             for (MonitoringArea area : areas) {
                 // 获取区域内的船舶
                 List<AreaShip> ships = shipRepository.findByArea_IdAndStatus(
-                        area.getId(), ShipStatus.IN_AREA
+                        area.getId(), ShipStatus.IN_AREA.getCode()
                 );
 
                 for (AreaShip ship : ships) {

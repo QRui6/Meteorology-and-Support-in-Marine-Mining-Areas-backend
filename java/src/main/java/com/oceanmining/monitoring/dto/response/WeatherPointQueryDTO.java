@@ -9,6 +9,7 @@ public class WeatherPointQueryDTO {
     private WeatherVector wind;
     private WeatherVector wave;
     private WeatherVector current;
+    private WeatherVector internalWave;
     
     // Getters and Setters
     public LocationInfo getLocation() { return location; }
@@ -25,6 +26,9 @@ public class WeatherPointQueryDTO {
     
     public WeatherVector getCurrent() { return current; }
     public void setCurrent(WeatherVector current) { this.current = current; }
+    
+    public WeatherVector getInternalWave() { return internalWave; }
+    public void setInternalWave(WeatherVector internalWave) { this.internalWave = internalWave; }
 
     public static class LocationInfo {
         private double lat;

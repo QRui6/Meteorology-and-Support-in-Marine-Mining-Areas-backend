@@ -36,11 +36,14 @@ public class MiningAreaService {
     
     private final GeometryFactory geometryFactory = new GeometryFactory();
     
-    @Transactional
     public int importFromGeoJson() throws IOException {
         logger.info("开始从GeoJSON文件导入矿区数据...");
         
         ClassPathResource resource = new ClassPathResource("static/data/ocean_mining_final.geojson");
+        if (!resource.exists()) {
+            throw new IOException("GeoJSON文件不存在: static/data/ocean_mining_final.geojson");
+        }
+        
         JsonNode rootNode = objectMapper.readTree(resource.getInputStream());
         
         JsonNode features = rootNode.get("features");
@@ -48,18 +51,58 @@ public class MiningAreaService {
             throw new IOException("无效的GeoJSON格式");
         }
         
+        // 先清空现有数据（避免唯一约束冲突）
+        logger.info("清空现有矿区数据...");
+        long existingCount = repository.count();
+        if (existingCount > 0) {
+            repository.deleteAll();
+            logger.info("已删除 {} 条现有数据", existingCount);
+        }
+        
         int count = 0;
+        int errorCount = 0;
+        int totalFeatures = features.size();
+        logger.info("准备导入 {} 个矿区...", totalFeatures);
+        
+        List<MiningArea> batchList = new ArrayList<>();
+        int batchSize = 50;
+        
         for (JsonNode feature : features) {
             try {
                 MiningArea area = parseMiningArea(feature);
-                repository.save(area);
-                count++;
+                if (area != null && area.getAreaId() != null) {
+                    batchList.add(area);
+                    
+                    // 批量保存
+                    if (batchList.size() >= batchSize) {
+                        repository.saveAll(batchList);
+                        count += batchList.size();
+                        logger.info("已导入 {}/{} 个矿区...", count, totalFeatures);
+                        batchList.clear();
+                    }
+                } else {
+                    errorCount++;
+                    logger.warn("跳过无效的矿区数据 (area_id为空)");
+                }
             } catch (Exception e) {
+                errorCount++;
                 logger.error("解析矿区数据失败: {}", e.getMessage());
+                // 继续处理下一个
             }
         }
         
-        logger.info("成功导入 {} 个矿区", count);
+        // 保存剩余的数据
+        if (!batchList.isEmpty()) {
+            repository.saveAll(batchList);
+            count += batchList.size();
+        }
+        
+        if (errorCount > 0) {
+            logger.warn("导入完成，成功: {}, 失败: {}", count, errorCount);
+        } else {
+            logger.info("✅ 成功导入 {} 个矿区，无错误", count);
+        }
+        
         return count;
     }
     
@@ -80,14 +123,23 @@ public class MiningAreaService {
             
             JsonNode areaKm2Node = properties.get("area_km2");
             if (areaKm2Node != null && !areaKm2Node.isNull()) {
-                area.setAreaKm2(new BigDecimal(areaKm2Node.asText()));
+                try {
+                    area.setAreaKm2(new BigDecimal(areaKm2Node.asText()));
+                } catch (NumberFormatException e) {
+                    logger.warn("无效的面积值: {}", areaKm2Node.asText());
+                }
             }
         }
         
         JsonNode geometry = feature.get("geometry");
         if (geometry != null) {
             area.setCoordinates(geometry.get("coordinates"));
-            area.setGeometry(parseGeometry(geometry));
+            try {
+                area.setGeometry(parseGeometry(geometry));
+            } catch (Exception e) {
+                logger.warn("解析几何对象失败: {}", e.getMessage());
+                // 几何对象解析失败不影响其他数据
+            }
         }
         
         return area;
@@ -137,7 +189,8 @@ public class MiningAreaService {
     
     private GeoJsonFeature toGeoJsonFeature(MiningArea area) {
         Map<String, Object> properties = new HashMap<>();
-        properties.put("id", area.getAreaId());
+        properties.put("dbId", area.getId());  // 数据库ID（数字）
+        properties.put("id", area.getAreaId());  // 矿区ID（字符串）
         properties.put("category", area.getCategory());
         properties.put("mineral", area.getMineral());
         properties.put("area_km2", area.getAreaKm2());

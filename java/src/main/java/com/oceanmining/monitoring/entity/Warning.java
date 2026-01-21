@@ -1,5 +1,6 @@
 package com.oceanmining.monitoring.entity;
 
+import com.oceanmining.monitoring.converter.WarningSeverityConverter;
 import com.oceanmining.monitoring.enums.WarningSeverity;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
@@ -41,7 +42,7 @@ public class Warning {
     /**
      * 严重程度
      */
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = WarningSeverityConverter.class)
     @Column(columnDefinition = "warning_severity")
     private WarningSeverity severity;
     

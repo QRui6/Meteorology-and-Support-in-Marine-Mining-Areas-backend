@@ -6,6 +6,7 @@ import com.oceanmining.monitoring.dto.response.AvailableIndicesDTO;
 import com.oceanmining.monitoring.dto.response.WeatherDataDTO;
 import com.oceanmining.monitoring.dto.response.WeatherMetadataDTO;
 import com.oceanmining.monitoring.dto.response.WeatherPointQueryDTO;
+import com.oceanmining.monitoring.dto.response.WeatherTimeSeriesDTO;
 import com.oceanmining.monitoring.entity.*;
 import com.oceanmining.monitoring.exception.ResourceNotFoundException;
 import com.oceanmining.monitoring.repository.*;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 气象数据服务
@@ -39,17 +41,23 @@ public class WeatherDataService {
     private final WindDataRepository windDataRepository;
     private final OceanCurrentDataRepository currentDataRepository;
     private final WaveDataRepository waveDataRepository;
+    private final InternalWaveMetadataRepository internalWaveMetadataRepository;
+    private final InternalWaveDataRepository internalWaveDataRepository;
     
     @Autowired
     public WeatherDataService(
             WeatherMetadataRepository metadataRepository,
             WindDataRepository windDataRepository,
             OceanCurrentDataRepository currentDataRepository,
-            WaveDataRepository waveDataRepository) {
+            WaveDataRepository waveDataRepository,
+            InternalWaveMetadataRepository internalWaveMetadataRepository,
+            InternalWaveDataRepository internalWaveDataRepository) {
         this.metadataRepository = metadataRepository;
         this.windDataRepository = windDataRepository;
         this.currentDataRepository = currentDataRepository;
         this.waveDataRepository = waveDataRepository;
+        this.internalWaveMetadataRepository = internalWaveMetadataRepository;
+        this.internalWaveDataRepository = internalWaveDataRepository;
     }
     
     /**
@@ -496,12 +504,248 @@ public class WeatherDataService {
                 }
             }
             
-            log.info("点查询完成: wind={}, wave={}, current={}", 
-                    result.getWind() != null, result.getWave() != null, result.getCurrent() != null);
+            // 查询内波数据
+            InternalWaveMetadata internalWaveMetadata = internalWaveMetadataRepository
+                    .findByType("internal_wave")
+                    .orElse(null);
+            if (internalWaveMetadata != null) {
+                InternalWaveData internalWaveData = internalWaveDataRepository
+                        .findByTimeIndex(timeIndex)
+                        .orElse(null);
+                if (internalWaveData != null) {
+                    Map<String, Object> gridData = internalWaveMetadata.getGridData();
+                    int lonSize = ((Number) gridData.get("lonSize")).intValue();
+                    int latSize = ((Number) gridData.get("latSize")).intValue();
+                    double lonMin = ((Number) gridData.get("lonMin")).doubleValue();
+                    double latMin = ((Number) gridData.get("latMin")).doubleValue();
+                    double lonMax = ((Number) gridData.get("lonMax")).doubleValue();
+                    double latMax = ((Number) gridData.get("latMax")).doubleValue();
+                    
+                    GridData internalWaveGrid = WeatherInterpolationUtil.parseBinaryData(
+                            internalWaveData.getUData(),
+                            internalWaveData.getVData(),
+                            lonSize,
+                            latSize,
+                            lonMin,
+                            latMin,
+                            lonMax,
+                            latMax
+                    );
+                    Vector2D internalWaveVector = WeatherInterpolationUtil.bilinearInterpolation(internalWaveGrid, lat, lon);
+                    result.setInternalWave(WeatherInterpolationUtil.calculateSpeedAndDirection(internalWaveVector));
+                }
+            }
+            
+            log.info("点查询完成: wind={}, wave={}, current={}, internalWave={}", 
+                    result.getWind() != null, result.getWave() != null, result.getCurrent() != null, result.getInternalWave() != null);
             
         } catch (Exception e) {
             log.error("查询点气象数据失败", e);
             throw new RuntimeException("查询点气象数据失败", e);
+        }
+        
+        return result;
+    }
+    
+    /**
+     * 查询指定点的气象时间序列数据（用于详情面板）
+     * 
+     * @param lat 纬度
+     * @param lon 经度
+     * @param startIndex 起始时间索引（可选，默认0）
+     * @param count 查询数量（可选，默认24，最大48）
+     * @return 时间序列数据
+     */
+    public WeatherTimeSeriesDTO queryPointWeatherTimeSeries(double lat, double lon, Integer startIndex, Integer count) {
+        log.info("查询点气象时间序列: lat={}, lon={}, startIndex={}, count={}", lat, lon, startIndex, count);
+        
+        if (startIndex == null) {
+            startIndex = 0;
+        }
+        if (count == null) {
+            count = 24;
+        }
+        // 限制最大查询数量
+        if (count > 48) {
+            count = 48;
+        }
+        
+        WeatherTimeSeriesDTO result = new WeatherTimeSeriesDTO();
+        result.setLocation(new WeatherTimeSeriesDTO.LocationInfo(lat, lon));
+        
+        List<WeatherTimeSeriesDTO.TimeStepData> timeSteps = new java.util.ArrayList<>();
+        
+        try {
+            // 获取元数据
+            WeatherMetadata windMetadata = metadataRepository.findByDataType_TypeCode("wind").orElse(null);
+            WeatherMetadata waveMetadata = metadataRepository.findByDataType_TypeCode("wave").orElse(null);
+            WeatherMetadata currentMetadata = metadataRepository.findByDataType_TypeCode("ocean_current").orElse(null);
+            InternalWaveMetadata internalWaveMetadata = internalWaveMetadataRepository.findByType("internal_wave").orElse(null);
+            
+            // 确定实际可查询的时间范围
+            int maxFrames = Integer.MAX_VALUE;
+            if (windMetadata != null) {
+                maxFrames = Math.min(maxFrames, windMetadata.getTotalFrames());
+            }
+            if (waveMetadata != null) {
+                maxFrames = Math.min(maxFrames, waveMetadata.getTotalFrames());
+            }
+            if (currentMetadata != null) {
+                maxFrames = Math.min(maxFrames, currentMetadata.getTotalFrames());
+            }
+            if (internalWaveMetadata != null) {
+                maxFrames = Math.min(maxFrames, internalWaveMetadata.getFrames());
+            }
+            
+            int endIndex = Math.min(startIndex + count, maxFrames);
+            
+            // 遍历每个时间步骤
+            for (int timeIndex = startIndex; timeIndex < endIndex; timeIndex++) {
+                WeatherTimeSeriesDTO.TimeStepData stepData = new WeatherTimeSeriesDTO.TimeStepData();
+                stepData.setTimeIndex(timeIndex);
+                
+                // 查询风场数据
+                if (windMetadata != null) {
+                    WindData windData = windDataRepository
+                            .findByMetadataAndTimeIndex(windMetadata, timeIndex)
+                            .orElse(null);
+                    if (windData != null) {
+                        GridData windGrid = WeatherInterpolationUtil.parseBinaryData(
+                                windData.getUComponent(),
+                                windData.getVComponent(),
+                                windMetadata.getGridLonSize(),
+                                windMetadata.getGridLatSize(),
+                                windMetadata.getGridLonMin().doubleValue(),
+                                windMetadata.getGridLatMin().doubleValue(),
+                                windMetadata.getGridLonMax().doubleValue(),
+                                windMetadata.getGridLatMax().doubleValue()
+                        );
+                        Vector2D windVector = WeatherInterpolationUtil.bilinearInterpolation(windGrid, lat, lon);
+                        WeatherTimeSeriesDTO.WeatherVector wind = new WeatherTimeSeriesDTO.WeatherVector(
+                                windVector.getU(),
+                                windVector.getV(),
+                                Math.sqrt(windVector.getU() * windVector.getU() + windVector.getV() * windVector.getV()),
+                                Math.toDegrees(Math.atan2(windVector.getU(), windVector.getV()))
+                        );
+                        stepData.setWind(wind);
+                    }
+                }
+                
+                // 查询波浪数据
+                if (waveMetadata != null) {
+                    WaveData waveData = waveDataRepository
+                            .findByMetadataAndTimeIndex(waveMetadata, timeIndex)
+                            .orElse(null);
+                    if (waveData != null) {
+                        GridData waveGrid = WeatherInterpolationUtil.parseBinaryData(
+                                waveData.getUComponent(),
+                                waveData.getVComponent(),
+                                waveMetadata.getGridLonSize(),
+                                waveMetadata.getGridLatSize(),
+                                waveMetadata.getGridLonMin().doubleValue(),
+                                waveMetadata.getGridLatMin().doubleValue(),
+                                waveMetadata.getGridLonMax().doubleValue(),
+                                waveMetadata.getGridLatMax().doubleValue()
+                        );
+                        Vector2D waveVector = WeatherInterpolationUtil.bilinearInterpolation(waveGrid, lat, lon);
+                        
+                        // 获取波高
+                        Double height = null;
+                        if (waveData.getWaveHeight() != null) {
+                            GridData heightGrid = WeatherInterpolationUtil.parseBinaryDataSingleChannel(
+                                    waveData.getWaveHeight(),
+                                    waveMetadata.getGridLonSize(),
+                                    waveMetadata.getGridLatSize(),
+                                    waveMetadata.getGridLonMin().doubleValue(),
+                                    waveMetadata.getGridLatMin().doubleValue(),
+                                    waveMetadata.getGridLonMax().doubleValue(),
+                                    waveMetadata.getGridLatMax().doubleValue()
+                            );
+                            height = WeatherInterpolationUtil.bilinearInterpolationSingleValue(heightGrid, lat, lon);
+                        }
+                        
+                        WeatherTimeSeriesDTO.WaveData wave = new WeatherTimeSeriesDTO.WaveData(
+                                waveVector.getU(),
+                                waveVector.getV(),
+                                Math.sqrt(waveVector.getU() * waveVector.getU() + waveVector.getV() * waveVector.getV()),
+                                Math.toDegrees(Math.atan2(waveVector.getU(), waveVector.getV())),
+                                height
+                        );
+                        stepData.setWave(wave);
+                    }
+                }
+                
+                // 查询洋流数据
+                if (currentMetadata != null) {
+                    OceanCurrentData currentData = currentDataRepository
+                            .findByMetadataAndTimeIndex(currentMetadata, timeIndex)
+                            .orElse(null);
+                    if (currentData != null) {
+                        GridData currentGrid = WeatherInterpolationUtil.parseBinaryData(
+                                currentData.getUComponent(),
+                                currentData.getVComponent(),
+                                currentMetadata.getGridLonSize(),
+                                currentMetadata.getGridLatSize(),
+                                currentMetadata.getGridLonMin().doubleValue(),
+                                currentMetadata.getGridLatMin().doubleValue(),
+                                currentMetadata.getGridLonMax().doubleValue(),
+                                currentMetadata.getGridLatMax().doubleValue()
+                        );
+                        Vector2D currentVector = WeatherInterpolationUtil.bilinearInterpolation(currentGrid, lat, lon);
+                        WeatherTimeSeriesDTO.WeatherVector current = new WeatherTimeSeriesDTO.WeatherVector(
+                                currentVector.getU(),
+                                currentVector.getV(),
+                                Math.sqrt(currentVector.getU() * currentVector.getU() + currentVector.getV() * currentVector.getV()),
+                                Math.toDegrees(Math.atan2(currentVector.getU(), currentVector.getV()))
+                        );
+                        stepData.setCurrent(current);
+                    }
+                }
+                
+                // 查询内波数据
+                if (internalWaveMetadata != null) {
+                    InternalWaveData internalWaveData = internalWaveDataRepository
+                            .findByTimeIndex(timeIndex)
+                            .orElse(null);
+                    if (internalWaveData != null) {
+                        Map<String, Object> gridData = internalWaveMetadata.getGridData();
+                        int lonSize = ((Number) gridData.get("lonSize")).intValue();
+                        int latSize = ((Number) gridData.get("latSize")).intValue();
+                        double lonMin = ((Number) gridData.get("lonMin")).doubleValue();
+                        double latMin = ((Number) gridData.get("latMin")).doubleValue();
+                        double lonMax = ((Number) gridData.get("lonMax")).doubleValue();
+                        double latMax = ((Number) gridData.get("latMax")).doubleValue();
+                        
+                        GridData internalWaveGrid = WeatherInterpolationUtil.parseBinaryData(
+                                internalWaveData.getUData(),
+                                internalWaveData.getVData(),
+                                lonSize,
+                                latSize,
+                                lonMin,
+                                latMin,
+                                lonMax,
+                                latMax
+                        );
+                        Vector2D internalWaveVector = WeatherInterpolationUtil.bilinearInterpolation(internalWaveGrid, lat, lon);
+                        WeatherTimeSeriesDTO.WeatherVector internalWave = new WeatherTimeSeriesDTO.WeatherVector(
+                                internalWaveVector.getU(),
+                                internalWaveVector.getV(),
+                                Math.sqrt(internalWaveVector.getU() * internalWaveVector.getU() + internalWaveVector.getV() * internalWaveVector.getV()),
+                                Math.toDegrees(Math.atan2(internalWaveVector.getU(), internalWaveVector.getV()))
+                        );
+                        stepData.setInternalWave(internalWave);
+                    }
+                }
+                
+                timeSteps.add(stepData);
+            }
+            
+            result.setTimeSteps(timeSteps);
+            log.info("时间序列查询完成: 共{}个时间点", timeSteps.size());
+            
+        } catch (Exception e) {
+            log.error("查询气象时间序列失败", e);
+            throw new RuntimeException("查询气象时间序列失败", e);
         }
         
         return result;

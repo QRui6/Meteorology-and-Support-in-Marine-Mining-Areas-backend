@@ -1,5 +1,6 @@
 package com.oceanmining.monitoring.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
@@ -49,6 +50,7 @@ public class MiningArea {
     @Column(name = "coordinates", columnDefinition = "jsonb", nullable = false)
     private JsonNode coordinates;
     
+    @JsonIgnore
     @Column(name = "geometry", columnDefinition = "geometry(Polygon,4326)")
     private Geometry geometry;
     

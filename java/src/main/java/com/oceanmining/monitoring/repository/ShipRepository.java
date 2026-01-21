@@ -19,7 +19,8 @@ public interface ShipRepository extends JpaRepository<AreaShip, Long> {
     /**
      * 根据区域ID和状态查询船舶
      */
-    List<AreaShip> findByArea_IdAndStatus(Long areaId, ShipStatus status);
+    @Query(value = "SELECT * FROM area_ships WHERE area_id = :areaId AND status = CAST(:status AS ship_status)", nativeQuery = true)
+    List<AreaShip> findByArea_IdAndStatus(@Param("areaId") Long areaId, @Param("status") String status);
     
     /**
      * 根据区域ID查询所有在区域内或预警状态的船舶
@@ -32,7 +33,8 @@ public interface ShipRepository extends JpaRepository<AreaShip, Long> {
     /**
      * 根据MMSI和区域ID查询船舶
      */
-    Optional<AreaShip> findByMmsiAndArea_IdAndStatus(Long mmsi, Long areaId, ShipStatus status);
+    @Query("SELECT s FROM AreaShip s WHERE s.mmsi = :mmsi AND s.area.id = :areaId AND s.status = :status")
+    Optional<AreaShip> findByMmsiAndArea_IdAndStatus(@Param("mmsi") Long mmsi, @Param("areaId") Long areaId, @Param("status") ShipStatus status);
     
     /**
      * 根据MMSI查询所有记录
@@ -42,12 +44,14 @@ public interface ShipRepository extends JpaRepository<AreaShip, Long> {
     /**
      * 统计区域内船舶数量
      */
-    long countByArea_IdAndStatus(Long areaId, ShipStatus status);
+    @Query("SELECT COUNT(s) FROM AreaShip s WHERE s.area.id = :areaId AND s.status = :status")
+    long countByArea_IdAndStatus(@Param("areaId") Long areaId, @Param("status") ShipStatus status);
     
     /**
      * 查询所有在区域内的船舶
      */
-    List<AreaShip> findByStatus(ShipStatus status);
+    @Query("SELECT s FROM AreaShip s WHERE s.status = :status")
+    List<AreaShip> findByStatus(@Param("status") ShipStatus status);
     
     /**
      * 查询预警状态的船舶
@@ -59,15 +63,18 @@ public interface ShipRepository extends JpaRepository<AreaShip, Long> {
     /**
      * 根据区域ID、MMSI和状态查询船舶（返回Optional）
      */
-    Optional<AreaShip> findByArea_IdAndMmsiAndStatus(Long areaId, Long mmsi, ShipStatus status);
+    @Query("SELECT s FROM AreaShip s WHERE s.area.id = :areaId AND s.mmsi = :mmsi AND s.status = :status")
+    Optional<AreaShip> findByArea_IdAndMmsiAndStatus(@Param("areaId") Long areaId, @Param("mmsi") Long mmsi, @Param("status") ShipStatus status);
     
     /**
      * 根据区域ID和多个状态查询船舶
      */
-    List<AreaShip> findByArea_IdAndStatusIn(Long areaId, List<ShipStatus> statuses);
+    @Query("SELECT s FROM AreaShip s WHERE s.area.id = :areaId AND s.status IN :statuses")
+    List<AreaShip> findByArea_IdAndStatusIn(@Param("areaId") Long areaId, @Param("statuses") List<ShipStatus> statuses);
     
     /**
      * 根据多个状态查询船舶
      */
-    List<AreaShip> findByStatusIn(List<ShipStatus> statuses);
+    @Query("SELECT s FROM AreaShip s WHERE s.status IN :statuses")
+    List<AreaShip> findByStatusIn(@Param("statuses") List<ShipStatus> statuses);
 }

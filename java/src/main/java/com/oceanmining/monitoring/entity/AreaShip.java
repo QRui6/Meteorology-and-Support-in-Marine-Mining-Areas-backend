@@ -1,5 +1,7 @@
 package com.oceanmining.monitoring.entity;
 
+import com.oceanmining.monitoring.converter.RiskLevelConverter;
+import com.oceanmining.monitoring.converter.ShipStatusConverter;
 import com.oceanmining.monitoring.enums.RiskLevel;
 import com.oceanmining.monitoring.enums.ShipStatus;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
@@ -56,7 +58,7 @@ public class AreaShip {
     /**
      * 船舶状态
      */
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = ShipStatusConverter.class)
     @Column(columnDefinition = "ship_status")
     private ShipStatus status;
     
@@ -84,7 +86,7 @@ public class AreaShip {
     /**
      * 风险等级
      */
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = RiskLevelConverter.class)
     @Column(name = "risk_level", columnDefinition = "risk_level")
     private RiskLevel riskLevel;
     

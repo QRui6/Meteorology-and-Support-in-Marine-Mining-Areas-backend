@@ -14,24 +14,28 @@ public class CorsConfig {
     
     @Bean
     public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         
-        // 允许所有域名（生产环境应该配置具体的域名）
+        // 允许所有来源（使用 allowedOriginPatterns 代替 allowedOrigin）
         config.addAllowedOriginPattern("*");
-        
-        // 允许所有请求头
-        config.addAllowedHeader("*");
-        
-        // 允许所有HTTP方法
+            
+        // 允许所有方法
         config.addAllowedMethod("*");
+        
+        // 允许所有头
+        config.addAllowedHeader("*");
         
         // 允许携带凭证
         config.setAllowCredentials(true);
         
+        // 暴露的响应头
+        config.addExposedHeader("*");
+        
         // 预检请求的有效期（秒）
         config.setMaxAge(3600L);
         
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        // 应用到所有路径
         source.registerCorsConfiguration("/**", config);
         
         return new CorsFilter(source);
