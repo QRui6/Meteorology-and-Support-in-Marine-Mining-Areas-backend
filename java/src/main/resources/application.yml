@@ -1,12 +1,12 @@
 spring:
   application:
     name: ship-monitoring-backend
-  
+
   # 数据源配置
   datasource:
-    url: jdbc:postgresql://121.194.93.61:5432/ship_monitoring?sslmode=disable
+    url: jdbc:postgresql://127.0.0.1:5432/ship_monitoring?sslmode=disable
     username: postgres
-    password: "jcf0326_103"
+    password: "postgres"
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 20
@@ -14,7 +14,7 @@ spring:
       connection-timeout: 30000
       idle-timeout: 600000
       max-lifetime: 1800000
-  
+
   # JPA配置
   jpa:
     database-platform: org.hibernate.spatial.dialect.postgis.PostgisPG95Dialect
@@ -27,7 +27,7 @@ spring:
         jdbc:
           time_zone: UTC
     show-sql: false
-  
+
   # 缓存配置
   cache:
     type: caffeine
@@ -37,7 +37,7 @@ spring:
       - weatherMetadata
       - weatherData
       - availableIndices
-  
+
   # Jackson配置
   jackson:
     time-zone: GMT+8
@@ -48,7 +48,7 @@ spring:
 # 服务器配置
 server:
   port: 8081
-  address: 0.0.0.0  # 允许外部访问
+  address: 0.0.0.0 # 允许外部访问
   servlet:
     context-path: /
   compression:
@@ -77,7 +77,7 @@ webhook:
 scheduler:
   ship-update:
     enabled: true
-    fixed-rate: 600000  # 10分钟 = 600000毫秒
+    fixed-rate: 600000 # 10分钟 = 600000毫秒
 
 # 气象数据配置
 weather:
@@ -87,7 +87,7 @@ weather:
       ocean_current: D:/project/public/ocean_currents
       wave: D:/project/public/wave_data
   migration:
-    auto-run: false  # 是否自动执行数据迁移
+    auto-run: false # 是否自动执行数据迁移
 
 # 日志配置
 logging:

@@ -3,7 +3,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/ship_monitoring
     username: postgres
-    password: postgres123
+    password: postgres
 
 shipxy:
   api:

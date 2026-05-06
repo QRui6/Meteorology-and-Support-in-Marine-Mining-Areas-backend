@@ -4,7 +4,7 @@
 # 用于在远程PostgreSQL数据库上创建所有表结构
 
 # 数据库连接信息
-DB_HOST="121.194.93.61"
+DB_HOST="127.0.0.1"
 DB_PORT="5432"
 DB_USER="postgres"
 DB_NAME="ship_monitoring"

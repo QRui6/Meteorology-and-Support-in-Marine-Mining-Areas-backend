@@ -12,7 +12,7 @@ from datetime import datetime
 
 # 数据库连接配置
 DB_CONFIG = {
-    'host': '121.194.93.61',
+    'host': '127.0.0.1',
     'port': 5432,
     'database': 'ship_monitoring',
     'user': 'postgres',
